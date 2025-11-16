@@ -6,6 +6,7 @@ import Table from '../components/Table';
 import Button from '../components/Button';
 import Loading from '../components/Loading';
 import Alert from '../components/Alert';
+import PrintSalesOrder from '../components/PrintSalesOrder';
 import { formatDate, formatCurrency } from '../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../utils/constants';
@@ -15,6 +16,8 @@ const Home = () => {
   const navigate = useNavigate();
   const { items: salesOrders, loading, error } = useSelector((state) => state.salesOrders);
   const [deleteSuccess, setDeleteSuccess] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showPrintModal, setShowPrintModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchSalesOrders());
@@ -37,23 +40,31 @@ const Home = () => {
     navigate(ROUTES.SALES_ORDER, { state: { order } });
   };
 
+  const handlePrint = (order) => {
+    setSelectedOrder(order);
+    setShowPrintModal(true);
+  };
+
   const columns = [
     {
       key: 'id',
       label: 'Order ID',
     },
     {
-      key: 'customerName',
-      label: 'Customer',
-      render: (value, row) => row.customer?.name || 'N/A',
+      key: 'invoiceNo',
+      label: 'Invoice No.',
     },
     {
-      key: 'orderDate',
-      label: 'Order Date',
+      key: 'customerName',
+      label: 'Customer',
+    },
+    {
+      key: 'invoiceDate',
+      label: 'Invoice Date',
       render: (value) => formatDate(value),
     },
     {
-      key: 'totalAmount',
+      key: 'totalIncl',
       label: 'Total Amount',
       render: (value) => formatCurrency(value),
     },
@@ -62,8 +73,8 @@ const Home = () => {
       label: 'Status',
       render: (value) => (
         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-          value === 'completed' ? 'bg-green-100 text-green-800' :
-          value === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+          value === 'completed' || value === 'Completed' ? 'bg-green-100 text-green-800' :
+          value === 'pending' || value === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
           'bg-gray-100 text-gray-800'
         }`}>
           {value || 'Pending'}
@@ -101,7 +112,7 @@ const Home = () => {
               <h3 className="text-sm font-semibold text-gray-600 mb-2">Total Revenue</h3>
               <p className="text-3xl font-bold text-success">
                 {formatCurrency(
-                  salesOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)
+                  salesOrders.reduce((sum, order) => sum + (order.totalIncl || 0), 0)
                 )}
               </p>
             </div>
@@ -120,6 +131,86 @@ const Home = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
+
+        {/* Custom Actions for each row */}
+        <div className="mt-4">
+          <table className="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Invoice No</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Total</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {salesOrders.map((order) => (
+                <tr key={order.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{order.invoiceNo}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{order.customerName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{formatDate(order.invoiceDate)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{formatCurrency(order.totalIncl)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      order.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                      order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {order.status || 'Pending'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handlePrint(order)}
+                        className="text-blue-600 hover:text-blue-800 font-semibold"
+                      >
+                        🖨️ Print
+                      </button>
+                      <button
+                        onClick={() => handleEdit(order)}
+                        className="text-primary hover:text-blue-700 font-semibold"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(order)}
+                        className="text-danger hover:text-red-700 font-semibold"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Print Modal */}
+        {showPrintModal && selectedOrder && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Print Sales Order</h2>
+                <button
+                  onClick={() => setShowPrintModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              <PrintSalesOrder order={selectedOrder} />
+              <div className="mt-4">
+                <Button onClick={() => setShowPrintModal(false)} variant="outline">
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );

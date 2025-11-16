@@ -13,6 +13,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<SalesOrder> SalesOrders { get; set; }
+    public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,6 +24,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(e => e.ItemCode).HasMaxLength(50);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
         });
@@ -30,9 +33,47 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
+        });
+
+        // Configure SalesOrder entity
+        modelBuilder.Entity<SalesOrder>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.InvoiceNo).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.CustomerName).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.TotalExcl).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.TotalTax).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.TotalIncl).HasColumnType("decimal(18,2)");
+            
+            entity.HasOne(e => e.Customer)
+                .WithMany(c => c.SalesOrders)
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasMany(e => e.Items)
+                .WithOne(i => i.SalesOrder)
+                .HasForeignKey(i => i.SalesOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Configure SalesOrderItem entity
+        modelBuilder.Entity<SalesOrderItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ItemCode).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.TaxRate).HasColumnType("decimal(5,2)");
+            entity.Property(e => e.ExclAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.TaxAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.InclAmount).HasColumnType("decimal(18,2)");
+            
+            entity.HasOne(e => e.Product)
+                .WithMany(p => p.SalesOrderItems)
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configure User entity
