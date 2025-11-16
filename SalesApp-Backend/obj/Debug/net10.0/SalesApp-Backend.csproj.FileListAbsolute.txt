@@ -121,3 +121,13 @@ C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\obj\D
 C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\obj\Debug\net10.0\ref\SalesApp-Backend.dll
 C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\MySqlConnector.dll
 C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Pomelo.EntityFrameworkCore.MySql.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\obj\Debug\net10.0\SalesApp-Backend.sourcelink.json
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\liyan\OneDrive\Documents\GitHub\SalesApp-Backend\SalesApp-Backend\bin\Debug\net10.0\BCrypt.Net-Next.dll
