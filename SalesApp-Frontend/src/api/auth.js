@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Zod schemas for authentication
 export const LoginSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(3),
   password: z.string().min(6),
 });
 
@@ -23,7 +23,7 @@ export const AuthResponseSchema = z.object({
 });
 
 // Base API URL
-const API_URL = "/api/auth";
+const API_URL = "http://localhost:5073/api/auth";
 
 // Service functions
 export const AuthService = {

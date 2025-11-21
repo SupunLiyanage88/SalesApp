@@ -1,11 +1,22 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/slices/authSlice';
 import { ROUTES } from '../utils/constants';
+import Button from './Button';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate(ROUTES.LOGIN);
+  };
 
   return (
     <nav className="bg-white shadow-lg">
@@ -16,7 +27,7 @@ const Navbar = () => {
               SalesApp
             </Link>
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-6 items-center">
             <Link
               to={ROUTES.HOME}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
@@ -37,6 +48,20 @@ const Navbar = () => {
             >
               Sales Order
             </Link>
+            <div className="flex items-center gap-4 ml-4 pl-4 border-l border-gray-300">
+              {user && (
+                <span className="text-sm text-gray-600">
+                  Welcome, <span className="font-semibold">{user.email || user.username}</span>
+                </span>
+              )}
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </div>
